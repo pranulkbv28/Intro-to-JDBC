@@ -1,0 +1,10 @@
+# Java build output
+out/
+*.class
+
+# OS junk
+.DS_Store
+
+# VS Code (ignore everything except settings if you keep it)
+.vscode/*
+!.vscode/settings.json
