@@ -2,15 +2,15 @@ package jdbcdao.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class StudentDAO {
-    public Student getStudent(int rollno) {
-        Student stud = new Student();
 
-        String getStudentQuery = "select * from students where rollno=" + rollno;
+    Connection con = null;
 
+    public void connect() {
         try {
             Class.forName("org.postgresql.Driver");
 
@@ -18,7 +18,19 @@ public class StudentDAO {
             String user = "pranaavbv";
             String password = "pranaavBV";
 
-            Connection con = DriverManager.getConnection(url, user, password);
+            con = DriverManager.getConnection(url, user, password);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public Student getStudent(int rollno) {
+        Student stud = new Student();
+
+        String getStudentQuery = "select * from students where rollno=" + rollno;
+
+        try {
+            connect();
             Statement st = con.createStatement();
 
             ResultSet rs = st.executeQuery(getStudentQuery);
@@ -38,6 +50,33 @@ public class StudentDAO {
             e.printStackTrace();
 
             return null;
+        }
+    }
+
+    public void addStudent(Student stud) {
+        int rollno = stud.getRollno();
+        String sname = stud.getSname();
+        // String insertStudentQuery = "insert into students values ("+rollno+",
+        // '"+sname+"')";
+        String insertStudentQuery = "insert into students values (?,?)";
+        int count = 0;
+
+        try {
+            connect();
+
+            PreparedStatement prepSt = con.prepareStatement(insertStudentQuery);
+            prepSt.setInt(1, rollno);
+            prepSt.setString(2, sname);
+
+            count = prepSt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        if (count == 1) {
+            System.out.println("Student record added successfully");
+        } else {
+            System.out.println("Error in added student record");
         }
     }
 }
