@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 public class StudentDAO {
@@ -86,6 +87,58 @@ public class StudentDAO {
             System.out.println(count + " student record(s) added successfully");
         } else {
             System.out.println("Error in added student record(s)");
+        }
+    }
+
+    public boolean deleteStudent(int rollno) {
+
+        String sql = "DELETE FROM students WHERE rollno = ?";
+
+        try {
+            connect();
+            PreparedStatement pst = con.prepareStatement(sql);
+
+            pst.setInt(1, rollno);
+            int affectedRows = pst.executeUpdate();
+
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to delete student with rollno " + rollno, e);
+        }
+    }
+
+    public boolean updateStudentName(Student[] students) {
+        if (students == null || students.length == 0) {
+            return false;
+        }
+
+        String sql = "UPDATE students SET sname=? WHERE rollno=?";
+
+        try {
+            connect();
+
+            try (PreparedStatement pst = con.prepareStatement(sql)) {
+
+                for (Student s : students) {
+                    pst.setString(1, s.getSname());
+                    pst.setInt(2, s.getRollno());
+                    pst.addBatch();
+                }
+
+                int[] affectedRows = pst.executeBatch();
+
+                int totalUpdated = 0;
+                for (int count : affectedRows) {
+                    if (count > 0) {
+                        totalUpdated += count;
+                    }
+                }
+
+                return totalUpdated > 0;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update student(s)", e);
         }
     }
 }

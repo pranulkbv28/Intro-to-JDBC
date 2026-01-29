@@ -16,8 +16,26 @@ public class IntroToJDBCDAO {
             System.out.println(stud1.getSname());
         }
 
-        Student stud2 = new Student(7, "Tushar");
+        Student stud2 = new Student(4, "Maams");
         Student studArr[] = { stud2 };
         dao.addStudent(studArr);
+
+        if (dao.deleteStudent(7)) {
+            System.out.println("Successfully deleted student record");
+        } else {
+            System.out.println("No student found to delete");
+        }
+
+        Student stud3 = new Student(3, "Viraj C");
+        Student stud4 = new Student(4, "Nidhi");
+        Student stud5 = new Student(6, "Maams");
+
+        Student[] updateStudArr = { stud3, stud4, stud5 };
+
+        if (dao.updateStudentName(updateStudArr)) {
+            System.out.println("Successfully updated student record");
+        } else {
+            System.out.println("No updations");
+        }
     }
 }
