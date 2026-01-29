@@ -17,6 +17,7 @@ public class IntroToJDBCDAO {
         }
 
         Student stud2 = new Student(7, "Tushar");
-        dao.addStudent(stud2);
+        Student studArr[] = { stud2 };
+        dao.addStudent(studArr);
     }
 }

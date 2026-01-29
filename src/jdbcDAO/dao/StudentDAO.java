@@ -53,9 +53,9 @@ public class StudentDAO {
         }
     }
 
-    public void addStudent(Student stud) {
-        int rollno = stud.getRollno();
-        String sname = stud.getSname();
+    public void addStudent(Student stud[]) {
+        // int rollno = stud.getRollno();
+        // String sname = stud.getSname();
         // String insertStudentQuery = "insert into students values ("+rollno+",
         // '"+sname+"')";
         String insertStudentQuery = "insert into students values (?,?)";
@@ -65,18 +65,27 @@ public class StudentDAO {
             connect();
 
             PreparedStatement prepSt = con.prepareStatement(insertStudentQuery);
-            prepSt.setInt(1, rollno);
-            prepSt.setString(2, sname);
 
-            count = prepSt.executeUpdate();
+            int i = 0;
+            while (i < stud.length) {
+                prepSt.setInt(1, stud[i].getRollno());
+                prepSt.setString(2, stud[i].getSname());
+                prepSt.addBatch();
+
+                i++;
+            }
+
+            int result[] = prepSt.executeBatch();
+
+            count = result.length;
         } catch (Exception e) {
             System.out.println(e);
         }
 
-        if (count == 1) {
-            System.out.println("Student record added successfully");
+        if (count > 0) {
+            System.out.println(count + " student record(s) added successfully");
         } else {
-            System.out.println("Error in added student record");
+            System.out.println("Error in added student record(s)");
         }
     }
 }
